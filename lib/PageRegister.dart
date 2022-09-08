@@ -1,7 +1,13 @@
+import 'dart:convert';
+
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:helloworld/custom/ExpandToggleButtons.dart';
 import 'package:dio/dio.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+
+import 'dataClass/article.dart';
 
 class PageRegister extends StatefulWidget {
   @override
@@ -13,9 +19,17 @@ class _PageRegisterState extends State<PageRegister>{
 
   final editAccount = TextEditingController();
   final editPassword = TextEditingController();
+  final editPasswordAgain = TextEditingController();
   var dropdownValue = 'ABC';
   var choiceChipValue = 'AAA';
   var toggleButtonValue = 0;
+  var dio = Dio(BaseOptions(
+    baseUrl: "https://c14game.000webhostapp.com/",
+    connectTimeout: 5000,
+    receiveTimeout: 100000,
+    //contentType: Headers.jsonContentType,
+    responseType: ResponseType.plain,
+  ));
 
   @override
   Widget build(BuildContext context) {
@@ -65,7 +79,7 @@ class _PageRegisterState extends State<PageRegister>{
                       ),
                     ),
                     Padding(
-                      padding: const EdgeInsets.only(top: 20,bottom: 10),
+                      padding: const EdgeInsets.only(top: 20),
                       child: TextField(
                         obscureText: true,
                         controller: editPassword,
@@ -77,26 +91,48 @@ class _PageRegisterState extends State<PageRegister>{
                         ),
                       ),
                     ),
-                    Row(
-                      children: [
-                        _choiceChip("AAA",true),
-                        _choiceChip("BBB",false),
-                        _choiceChip("CCC",false),
-                      ],
-                    ),
-                    SizedBox(
-                      width: double.infinity,
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: Colors.black26,
+                    Padding(
+                      padding: const EdgeInsets.only(top: 20),
+                      child: TextField(
+                        obscureText: true,
+                        controller: editPasswordAgain,
+                        decoration: InputDecoration(
+                            labelText: '再次輸入密碼',
+                            border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(8)
+                            )
                         ),
-                        child: _toggleButtons()
                       ),
                     ),
-                    customToggle(),
+                    //customToggle(),
                     ElevatedButton(
                       onPressed: () {
-                        print("文本文字為: ${editAccount.text} | ${editPassword.text}");
+                        showCupertinoModalPopup(
+                            context: context,
+                            semanticsDismissible: true,
+                            builder: (BuildContext context){
+                              return Center(
+                                child: CupertinoPicker(
+                                    itemExtent: 45,
+                                    backgroundColor: Colors.white,
+                                    onSelectedItemChanged: (index){
+                                      print("$index");
+                                    },
+                                    children: [
+                                      Container(color: Colors.lightBlueAccent),
+                                      Container(color: Colors.blueAccent),
+                                      Container(color: Colors.lightBlue),
+                                    ],
+                                ),
+                              );
+                            },
+                        );
+                      },
+                      child: Text("iOS風格選擇器"),
+                    ),
+                    ElevatedButton(
+                      onPressed: () {
+                        btnRegisterOnClick();
                       },
                       child: Text("註冊"),
                     ),
@@ -107,6 +143,63 @@ class _PageRegisterState extends State<PageRegister>{
           ],
         )
       ),
+    );
+  }
+
+  void btnRegisterOnClick(){
+    if(editAccount.text == ''){
+      makeToast("帳號未填寫");
+      return;
+    }
+    if(editAccount.text.length < 6){
+      makeToast("帳號至少要六個字元");
+      return;
+    }
+    if(editPassword.text == ''){
+      makeToast("密碼未填寫");
+      return;
+    }
+    if(editPassword.text.length < 8){
+      makeToast("帳號至少要八個字元");
+      return;
+    }
+    if(editPassword.text != editPasswordAgain.text){
+      makeToast("兩次密碼不相同");
+      return;
+    }
+    makeToast("註冊成功");
+    dioRegister();
+    //關閉葉面
+  }
+
+  Future<void> dioRegister() async {
+    var formData = FormData.fromMap({
+      'account': editAccount.text,
+      'password': editPassword.text,
+    });
+    var response = await dio.post(
+        "flutter/register.php",
+        data: formData
+    );
+    print("原始資料: ${response.data!}");
+    var json = jsonDecode(response.data!);
+    var article = Article.fromJson(json);
+    print("回傳結果: ${article.code}");
+    switch(article.code){
+      case 100: makeToast("失敗100");break;
+      case 200: makeToast("成功200");break;
+    }
+  }
+
+  void makeToast(String msg) {
+    Fluttertoast.showToast(
+        msg: msg,
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        timeInSecForIosWeb: 1,
+        backgroundColor: Colors.lightBlue,
+        textColor: Colors.white,
+        fontSize: 16.0
     );
   }
 
