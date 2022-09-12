@@ -6,8 +6,9 @@ import 'package:flutter/material.dart';
 import 'package:helloworld/custom/ExpandToggleButtons.dart';
 import 'package:dio/dio.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-
+import 'package:helloworld/custom/LoadingDialog.dart';
 import 'dataClass/article.dart';
+import 'module/BaseDio.dart';
 
 class PageRegister extends StatefulWidget {
   @override
@@ -23,13 +24,6 @@ class _PageRegisterState extends State<PageRegister>{
   var dropdownValue = 'ABC';
   var choiceChipValue = 'AAA';
   var toggleButtonValue = 0;
-  var dio = Dio(BaseOptions(
-    baseUrl: "https://c14game.000webhostapp.com/",
-    connectTimeout: 5000,
-    receiveTimeout: 100000,
-    //contentType: Headers.jsonContentType,
-    responseType: ResponseType.plain,
-  ));
 
   @override
   Widget build(BuildContext context) {
@@ -136,6 +130,12 @@ class _PageRegisterState extends State<PageRegister>{
                       },
                       child: Text("註冊"),
                     ),
+                    ElevatedButton(
+                      onPressed: () {
+                        LoadingDialog().showDialog(context, Future.delayed(Duration(seconds: 3)));
+                      },
+                      child: Text("載入框"),
+                    ),
                   ],
                 ),
               ),
@@ -145,6 +145,34 @@ class _PageRegisterState extends State<PageRegister>{
       ),
     );
   }
+
+  /*void showLoadingDialog(){
+    //Source: https://book.flutterchina.club/chapter7/dailog.html#_7-7-5-%E5%85%B6%E4%BB%96%E7%B1%BB%E5%9E%8B%E7%9A%84%E5%AF%B9%E8%AF%9D%E6%A1%86
+    showDialog(
+      context: context,
+      //barrierDismissible: false,
+      builder: (context){
+        return UnconstrainedBox(
+          constrainedAxis: Axis.vertical,
+          child: SizedBox(
+            width: 280,
+            child: AlertDialog(
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: const [
+                  CircularProgressIndicator(),
+                  Padding(
+                    padding: EdgeInsets.only(top: 20),
+                    child: Text("Loading..."),
+                  )
+                ],
+              ),
+            ),
+          ),
+        );
+      }
+    );
+  }*/
 
   void btnRegisterOnClick(){
     if(editAccount.text == ''){
@@ -168,7 +196,8 @@ class _PageRegisterState extends State<PageRegister>{
       return;
     }
     makeToast("註冊成功");
-    dioRegister();
+
+    LoadingDialog().showDialog(context, dioRegister() );
     //關閉葉面
   }
 
@@ -177,7 +206,8 @@ class _PageRegisterState extends State<PageRegister>{
       'account': editAccount.text,
       'password': editPassword.text,
     });
-    var response = await dio.post(
+
+    var response = await BaseDio.getInstance().post(
         "flutter/register.php",
         data: formData
     );
@@ -185,9 +215,11 @@ class _PageRegisterState extends State<PageRegister>{
     var json = jsonDecode(response.data!);
     var article = Article.fromJson(json);
     print("回傳結果: ${article.code}");
+    Navigator.of(context).pop();
     switch(article.code){
       case 100: makeToast("失敗100");break;
       case 200: makeToast("成功200");break;
+      case 201: makeToast("此帳號已存在");break;
     }
   }
 

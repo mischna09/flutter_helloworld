@@ -7,6 +7,8 @@ import 'package:flutter/material.dart';
 import 'package:helloworld/PageRegister.dart';
 import 'package:helloworld/dataClass/article.dart';
 
+import 'module/BaseDio.dart';
+
 void main() {
   runApp(const MyApp());
 }
@@ -59,21 +61,9 @@ class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
   var editAccount = TextEditingController();
   var editPassword = TextEditingController();
-  var dio = Dio(BaseOptions(
-    baseUrl: "https://c14game.000webhostapp.com/",
-    connectTimeout: 5000,
-    receiveTimeout: 100000,
-    //contentType: Headers.jsonContentType,
-    responseType: ResponseType.plain,
-  ));
 
   void _incrementCounter() {
     setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
       _counter++;
     });
   }
@@ -83,7 +73,7 @@ class _MyHomePageState extends State<MyHomePage> {
       'account': editAccount.text,
       'password': editPassword.text,
     });
-    var response = await dio.post(
+    var response = await BaseDio.getInstance().post(
         "flutter/login.php",
         data: formData
     );
