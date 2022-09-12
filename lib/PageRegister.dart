@@ -132,7 +132,8 @@ class _PageRegisterState extends State<PageRegister>{
                     ),
                     ElevatedButton(
                       onPressed: () {
-                        LoadingDialog().showDialog(context, Future.delayed(Duration(seconds: 3)));
+                        LoadingDialog().showDialogAndWait(context, Future.delayed(Duration(seconds: 3)));
+                        //LoadingDialog().showDialog(context, Future.delayed(Duration(seconds: 3)));
                       },
                       child: Text("載入框"),
                     ),
@@ -197,7 +198,7 @@ class _PageRegisterState extends State<PageRegister>{
     }
     makeToast("註冊成功");
 
-    LoadingDialog().showDialog(context, dioRegister() );
+    //LoadingDialog().showDialog(context, dioRegister() );
     //關閉葉面
   }
 
