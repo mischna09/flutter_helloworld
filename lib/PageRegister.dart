@@ -1,14 +1,12 @@
 import 'dart:convert';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:helloworld/custom/ExpandToggleButtons.dart';
 import 'package:dio/dio.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:helloworld/custom/LoadingDialog.dart';
 import 'dataClass/article.dart';
-import 'module/BaseDio.dart';
+import 'module/Util.dart';
 
 class PageRegister extends StatefulWidget {
   @override
@@ -16,7 +14,7 @@ class PageRegister extends StatefulWidget {
     return _PageRegisterState();
   }
 }
-class _PageRegisterState extends State<PageRegister>{
+class _PageRegisterState extends State<PageRegister> with Util{
 
   final editAccount = TextEditingController();
   final editPassword = TextEditingController();
@@ -196,8 +194,8 @@ class _PageRegisterState extends State<PageRegister>{
       makeToast("兩次密碼不相同");
       return;
     }
-    makeToast("註冊成功");
-
+    //makeToast("註冊成功");
+    LoadingDialog().showDialogAndWait(context, dioRegister());
     //LoadingDialog().showDialog(context, dioRegister() );
     //關閉葉面
   }
@@ -208,7 +206,7 @@ class _PageRegisterState extends State<PageRegister>{
       'password': editPassword.text,
     });
 
-    var response = await BaseDio.getInstance().post(
+    var response = await dio.post(
         "flutter/register.php",
         data: formData
     );
@@ -216,24 +214,12 @@ class _PageRegisterState extends State<PageRegister>{
     var json = jsonDecode(response.data!);
     var article = Article.fromJson(json);
     print("回傳結果: ${article.code}");
-    Navigator.of(context).pop();
     switch(article.code){
       case 100: makeToast("失敗100");break;
       case 200: makeToast("成功200");break;
       case 201: makeToast("此帳號已存在");break;
     }
-  }
-
-  void makeToast(String msg) {
-    Fluttertoast.showToast(
-        msg: msg,
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.BOTTOM,
-        timeInSecForIosWeb: 1,
-        backgroundColor: Colors.lightBlue,
-        textColor: Colors.white,
-        fontSize: 16.0
-    );
+    //TODO 註冊完關閉這個頁面
   }
 
   Container customToggle() {
@@ -299,7 +285,6 @@ class _PageRegisterState extends State<PageRegister>{
         setState(() {
           choiceChipValue = text;
         });
-        print("$text");
       },
       selected: choiceChipValue == text,
     );

@@ -4,10 +4,13 @@ import 'dart:ui';
 import 'package:dio/dio.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:helloworld/PageAccountList.dart';
 import 'package:helloworld/PageRegister.dart';
+import 'package:helloworld/custom/LoadingDialog.dart';
 import 'package:helloworld/dataClass/article.dart';
 
 import 'module/BaseDio.dart';
+import 'module/Util.dart';
 
 void main() {
   runApp(const MyApp());
@@ -57,7 +60,7 @@ class MyHomePage extends StatefulWidget {
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _MyHomePageState extends State<MyHomePage> with Util{
   int _counter = 0;
   var editAccount = TextEditingController();
   var editPassword = TextEditingController();
@@ -95,140 +98,159 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget secondBackup(BuildContext context){
     return Scaffold(
         appBar: AppBar(
-            title: Row(
-              children: const[
-                Icon(Icons.connected_tv_sharp),
-                Text("Hello World")
-              ],
-            )
+            title: Text("Hello World"),
         ),
         body: SafeArea(
-          child: Container(
-            height: double.infinity,
-            decoration: BoxDecoration(
-              color: Colors.lightBlueAccent
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Container(
-                  margin: const EdgeInsets.only(top: 24),
-                  width: 150,
-                  height: 150,
-                  clipBehavior: Clip.antiAlias,
-                  decoration: const BoxDecoration(
-                    color: Colors.white,
-                    boxShadow: [
-                      BoxShadow(
-                        blurRadius: 10,
-                        color: Color(0x4D000000),
-                        offset: Offset(0,2),
-                      )
-                    ],
-                    border: Border.fromBorderSide(BorderSide(
-                      color: Colors.blue,
-                      width: 1.0,
-                    )),
-                    shape: BoxShape.circle,
-                  ),
-                  child: const Icon(
-                    Icons.flutter_dash,
-                    size: 140,
-                    color: Colors.blue,
-                  ),
-                ),
-                Container(
-                  margin: const EdgeInsets.fromLTRB(24, 24, 24, 0),
-                  //height: MediaQuery.of(context).size.height*0.5,
-                  //width: MediaQuery.of(context).size.width*0.5,
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(8),
-                      shape: BoxShape.rectangle,
-                      boxShadow: const [
-                        BoxShadow(
-                          blurRadius: 5,
-                          color: Color(0x4D000000),
-                          offset: Offset(0,2),
-                        ),
-                      ]
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(24.0),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        TextField(
-                          controller: editAccount,
-                          decoration: InputDecoration(
-                            labelText: '帳號',
-                            //hintText: "請輸入帳號",
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(8)
+          /* 手勢感測，點畫面其他地方取消focus，提升UX */
+          child: GestureDetector(
+            onTap: () => FocusScope.of(context).unfocus(),
+            child: Container(
+              height: double.infinity,
+              decoration: BoxDecoration(color: Colors.lightBlueAccent),
+              child: Stack(
+                children: [
+                  Column(
+                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Container(
+                        margin: const EdgeInsets.only(top: 24),
+                        width: 150,
+                        height: 150,
+                        clipBehavior: Clip.antiAlias,
+                        decoration: const BoxDecoration(
+                          color: Colors.white,
+                          boxShadow: [
+                            BoxShadow(
+                              blurRadius: 10,
+                              color: Color(0x4D000000),
+                              offset: Offset(0, 2),
                             )
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 20,bottom: 10),
-                          child: TextField(
-                            obscureText: true,
-                            controller: editPassword,
-                            decoration: InputDecoration(
-                              labelText: '密碼',
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(8)
-                              )
-                            ),
-                          ),
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            RichText(text: TextSpan(
-                              text: "忘記密碼",
-                              style: const TextStyle(color: Colors.blue),
-                              recognizer: TapGestureRecognizer()..onTap = () {
-                                print("忘記密碼");
-                              }
-                            ))
                           ],
+                          border: Border.fromBorderSide(BorderSide(
+                            color: Colors.blue,
+                            width: 1.0,
+                          )),
+                          shape: BoxShape.circle,
                         ),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 10,bottom: 10),
-                          child: ElevatedButton(
-                            onPressed: () {
-                              dioGetArticleList();
-                            },
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: const [
-                                Text("登入"),
-                              ],
-                            ),
-                          ),
+                        child: const Icon(
+                          Icons.flutter_dash,
+                          size: 140,
+                          color: Colors.blue,
                         ),
-                        OutlinedButton(
-                          onPressed: () { Navigator.push(context, MaterialPageRoute(builder: (context)=> PageRegister())); },
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: const [
-                              Text("註冊"),
+                      ),
+                      Container(
+                        margin: const EdgeInsets.fromLTRB(24, 24, 24, 0),
+                        //height: MediaQuery.of(context).size.height*0.5,
+                        //width: MediaQuery.of(context).size.width*0.5,
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(8),
+                            shape: BoxShape.rectangle,
+                            boxShadow: const [
+                              BoxShadow(
+                                blurRadius: 5,
+                                color: Color(0x4D000000),
+                                offset: Offset(0, 2),
+                              ),
+                            ]),
+                        child: Padding(
+                          padding: const EdgeInsets.all(24.0),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              TextField(
+                                controller: editAccount,
+                                decoration: InputDecoration(
+                                    labelText: '帳號',
+                                    //hintText: "請輸入帳號",
+                                    border: OutlineInputBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(8))),
+                              ),
+                              Padding(
+                                padding:
+                                    const EdgeInsets.only(top: 20, bottom: 10),
+                                child: TextField(
+                                  obscureText: true,
+                                  controller: editPassword,
+                                  decoration: InputDecoration(
+                                      labelText: '密碼',
+                                      border: OutlineInputBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(8))),
+                                ),
+                              ),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  RichText(
+                                      text: TextSpan(
+                                          text: "忘記密碼",
+                                          style: const TextStyle(
+                                              color: Colors.blue),
+                                          recognizer: TapGestureRecognizer()
+                                            ..onTap = () {
+                                              print("忘記密碼");
+                                            }))
+                                ],
+                              ),
+                              Padding(
+                                padding:
+                                    const EdgeInsets.only(top: 10, bottom: 10),
+                                child: ElevatedButton(
+                                  onPressed: () {
+                                    LoadingDialog().showDialogAndWait(
+                                        context, dioGetArticleList());
+                                  },
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: const [
+                                      Text("登入"),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                              OutlinedButton(
+                                onPressed: ()=> startNewPage(context, PageRegister()) ,
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: const [
+                                    Text("註冊"),
+                                  ],
+                                ),
+                              ),
+                              OutlinedButton(
+                                onPressed: ()=> startNewPage(context, PageAccountList()) ,
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: const [
+                                    Text("直接登入"),
+                                  ],
+                                ),
+                              ),
                             ],
                           ),
                         ),
-                      ],
-                    ),
-
+                      )
+                    ],
                   ),
-                )
-              ],
+                  const Align(
+                    alignment: Alignment.bottomCenter,
+                    child: Text(
+                      "2022/9/13",
+                      style: TextStyle(
+                        color: Colors.white,
+                      ),
+                    ),
+                  )
+                ],
+              ),
             ),
           ),
-        )
-    );
+        ));
   }
 
   Widget firstBackup(BuildContext context) {
