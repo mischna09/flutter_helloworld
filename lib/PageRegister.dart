@@ -14,7 +14,7 @@ class PageRegister extends StatefulWidget {
     return _PageRegisterState();
   }
 }
-class _PageRegisterState extends State<PageRegister> with Util{
+class _PageRegisterState extends CustomState<PageRegister>{
 
   final editAccount = TextEditingController();
   final editPassword = TextEditingController();
@@ -210,8 +210,8 @@ class _PageRegisterState extends State<PageRegister> with Util{
         "flutter/register.php",
         data: formData
     );
-    print("原始資料: ${response.data!}");
-    var json = jsonDecode(response.data!);
+    print("原始資料: ${response.data}");
+    var json = jsonDecode(response.data);
     var article = Article.fromJson(json);
     print("回傳結果: ${article.code}");
     switch(article.code){
@@ -267,7 +267,7 @@ class _PageRegisterState extends State<PageRegister> with Util{
     return ExpandToggleButtons(
       borderRadius: BorderRadius.circular(24),
       onPressed: (index){
-        setState(() {
+        refreshUI(() {
           toggleButtonValue = index;
         });
       },
@@ -282,7 +282,7 @@ class _PageRegisterState extends State<PageRegister> with Util{
       selectedColor: Colors.blueAccent,
       disabledColor: Colors.greenAccent,
       onSelected: (bool value){
-        setState(() {
+        refreshUI(() {
           choiceChipValue = text;
         });
       },

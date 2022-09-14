@@ -1,16 +1,9 @@
 import 'dart:convert';
-import 'dart:ffi';
 
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:helloworld/custom/ExpandToggleButtons.dart';
-import 'package:dio/dio.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-import 'package:helloworld/custom/LoadingDialog.dart';
+import 'package:flutter/services.dart';
 import 'PageEditAccount.dart';
-import 'dataClass/article.dart';
-import 'module/BaseDio.dart';
 import 'module/Util.dart';
 
 class PageAccountList extends StatefulWidget {
@@ -19,7 +12,7 @@ class PageAccountList extends StatefulWidget {
     return _PageAccountListState();
   }
 }
-class _PageAccountListState extends State<PageAccountList>  with Util{
+class _PageAccountListState extends CustomState<PageAccountList>{
   List<dynamic>  resultList = [];
   /* 紀錄所選的ID(mysql的索引)，供換頁時使用 */
   int selectId = -1;
@@ -42,7 +35,10 @@ class _PageAccountListState extends State<PageAccountList>  with Util{
 
   Scaffold pageMain(BuildContext context){
     return Scaffold(
-      appBar: AppBar(title: const Text("帳號列表")),
+      appBar: AppBar(
+        //toolbarHeight: 0,
+        title: const Text("帳號列表")
+      ),
       body: SafeArea(
         child: Column(
           children: [
@@ -59,7 +55,7 @@ class _PageAccountListState extends State<PageAccountList>  with Util{
                     onTap: () => selectItem(index),
                     child: Card(
                       margin: EdgeInsets.all(6),
-                      color: selectId!=index ? Colors.white : Color(0xFF80D8FF),
+                      color: (selectId!=index) ? Colors.white : Theme.of(context).backgroundColor,
                       child: Padding(
                         padding: const EdgeInsets.fromLTRB(16, 16, 16, 16),
                         child: Column(
@@ -82,8 +78,8 @@ class _PageAccountListState extends State<PageAccountList>  with Util{
             Container(
               height: selectId==-1? 0:80,
               width: double.infinity,
-              decoration: const BoxDecoration(
-                color: Colors.lightBlueAccent,
+              decoration: BoxDecoration(
+                color: Theme.of(context).primaryColor,
                 borderRadius: BorderRadius.only(topLeft: Radius.circular(16), topRight: Radius.circular(16))
               ),
               child: Padding(
@@ -131,7 +127,7 @@ class _PageAccountListState extends State<PageAccountList>  with Util{
 
   void selectItem(int index){
     //int.parse(resultList[index]['id']);
-    setState(() => selectId = index);
+    refreshUI(() => selectId = index);
   }
 
   startNewPageAndWait() async{
@@ -145,12 +141,13 @@ class _PageAccountListState extends State<PageAccountList>  with Util{
 
   Future<void> dioGetList() async {
     var response = await dio.post("flutter/get_account_list.php");
-    print("原始資料: ${response.data!}");
-    var json = jsonDecode(response.data!);
+    print("原始資料: ${response.data}");
+    var json = jsonDecode(response.data);
     var code = json['code'];
     if(code == 200){
       resultList = json['data'];
     }
-    setState(() {});
+
+    refreshUI(null);
   }
 }

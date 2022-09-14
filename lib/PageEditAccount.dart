@@ -1,14 +1,9 @@
 import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:helloworld/custom/ExpandToggleButtons.dart';
 import 'package:dio/dio.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:helloworld/custom/LoadingDialog.dart';
-import 'dataClass/article.dart';
-import 'module/BaseDio.dart';
 import 'module/Util.dart';
 
 class PageEditAccount extends StatefulWidget {
@@ -20,7 +15,7 @@ class PageEditAccount extends StatefulWidget {
     return _PagePageEditAccountState();
   }
 }
-class _PagePageEditAccountState extends State<PageEditAccount>  with Util{
+class _PagePageEditAccountState extends CustomState<PageEditAccount>{
   var editAccount = TextEditingController();
   var editPassword = TextEditingController();
   String textAccount = "";
@@ -90,7 +85,7 @@ class _PagePageEditAccountState extends State<PageEditAccount>  with Util{
                     CheckboxListTile(
                       title: Text("確認無誤，準備送出資料",style: TextStyle(color: Colors.black45)),
                         value: isBtnSubmitEnable,
-                        onChanged:(value)=> setState(() => {isBtnSubmitEnable = value!}),
+                        onChanged:(value)=> refreshUI(() => {isBtnSubmitEnable = value!}),
                         controlAffinity: ListTileControlAffinity.leading,
                     ),
                     Row(
@@ -121,8 +116,8 @@ class _PagePageEditAccountState extends State<PageEditAccount>  with Util{
       'password': editPassword.text,
     });
     var response = await dio.post("flutter/set_account_by_id.php",data: formData);
-    print("原始資料: ${response.data!}");
-    var json = jsonDecode(response.data!);
+    print("原始資料: ${response.data}");
+    var json = jsonDecode(response.data);
     var code = json['code'];
     switch(code){
       case 100: makeToast("提交失敗，請再試一次");break;
@@ -140,11 +135,11 @@ class _PagePageEditAccountState extends State<PageEditAccount>  with Util{
       'id': widget.selectId,
     });
     var response = await dio.post("flutter/get_account_by_id.php",data: formData);
-    print("原始資料: ${response.data!}");
-    var json = jsonDecode(response.data!);
+    print("原始資料: ${response.data}");
+    var json = jsonDecode(response.data);
     //var code = json['code'];
     var data = json['data'];
-    setState(() {
+    refreshUI(() {
       textAccount = data['account'];
       textPassword = data['password'];
       editAccount.text = data['account'];

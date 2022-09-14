@@ -4,11 +4,12 @@ import 'dart:ui';
 import 'package:dio/dio.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:helloworld/PageAccountList.dart';
 import 'package:helloworld/PageRegister.dart';
-import 'package:helloworld/custom/LoadingDialog.dart';
 import 'package:helloworld/dataClass/article.dart';
 
+import 'PageMainMenu.dart';
 import 'module/BaseDio.dart';
 import 'module/Util.dart';
 
@@ -19,23 +20,14 @@ void main() {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Demo',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // Try running your application with "flutter run". You'll see the
-        // application has a blue toolbar. Then, without quitting the app, try
-        // changing the primarySwatch below to Colors.green and then invoke
-        // "hot reload" (press "r" in the console where you ran "flutter run",
-        // or simply save your changes to "hot reload" in a Flutter IDE).
-        // Notice that the counter didn't reset back to zero; the application
-        // is not restarted.
-        primarySwatch: Colors.blue,
+        /* TODO 主題顏色，可以讓用戶設定 */
+        primarySwatch: Colors.green,
       ),
       home: const MyHomePage(title: 'Flutter Demo Home Page'),
     );
@@ -44,32 +36,18 @@ class MyApp extends StatelessWidget {
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});
-
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
   final String title;
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> with Util{
+class _MyHomePageState extends CustomState<MyHomePage>{
   int _counter = 0;
   var editAccount = TextEditingController();
   var editPassword = TextEditingController();
 
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
-  }
+  /* TODO 首頁畫面重構，安全比例 */
 
   Future<void> dioGetArticleList() async {
     var formData = FormData.fromMap({
@@ -80,8 +58,8 @@ class _MyHomePageState extends State<MyHomePage> with Util{
         "flutter/login.php",
         data: formData
     );
-    print("原始資料: ${response.data!}");
-    var json = jsonDecode(response.data!);
+    print("原始資料: ${response.data}");
+    var json = jsonDecode(response.data);
     var article = Article.fromJson(json);
     print("回傳結果: ${article.code}");
     switch(article.code){
@@ -106,7 +84,7 @@ class _MyHomePageState extends State<MyHomePage> with Util{
             onTap: () => FocusScope.of(context).unfocus(),
             child: Container(
               height: double.infinity,
-              decoration: BoxDecoration(color: Colors.lightBlueAccent),
+              decoration: BoxDecoration(color: Theme.of(context).backgroundColor),
               child: Stack(
                 children: [
                   Column(
@@ -118,9 +96,9 @@ class _MyHomePageState extends State<MyHomePage> with Util{
                         width: 150,
                         height: 150,
                         clipBehavior: Clip.antiAlias,
-                        decoration: const BoxDecoration(
+                        decoration: BoxDecoration(
                           color: Colors.white,
-                          boxShadow: [
+                          boxShadow: const [
                             BoxShadow(
                               blurRadius: 10,
                               color: Color(0x4D000000),
@@ -128,15 +106,15 @@ class _MyHomePageState extends State<MyHomePage> with Util{
                             )
                           ],
                           border: Border.fromBorderSide(BorderSide(
-                            color: Colors.blue,
+                            color: Theme.of(context).primaryColor,
                             width: 1.0,
                           )),
                           shape: BoxShape.circle,
                         ),
-                        child: const Icon(
+                        child: Icon(
                           Icons.flutter_dash,
                           size: 140,
-                          color: Colors.blue,
+                          color: Theme.of(context).primaryColor,
                         ),
                       ),
                       Container(
@@ -202,8 +180,8 @@ class _MyHomePageState extends State<MyHomePage> with Util{
                                     const EdgeInsets.only(top: 10, bottom: 10),
                                 child: ElevatedButton(
                                   onPressed: () {
-                                    LoadingDialog().showDialogAndWait(
-                                        context, dioGetArticleList());
+                                    startNewPage(context, PageMainMenu());
+                                    //LoadingDialog().showDialogAndWait(context, dioGetArticleList());
                                   },
                                   child: Row(
                                     mainAxisAlignment: MainAxisAlignment.center,
@@ -402,7 +380,7 @@ class _MyHomePageState extends State<MyHomePage> with Util{
       ),
 
       floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
+        onPressed: null,
         tooltip: 'Increment',
         child: const Icon(Icons.add),
       ), // This trailing comma makes auto-formatting nicer for build methods.
