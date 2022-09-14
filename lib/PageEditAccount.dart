@@ -115,11 +115,8 @@ class _PagePageEditAccountState extends CustomState<PageEditAccount>{
       'account': editAccount.text,
       'password': editPassword.text,
     });
-    var response = await dio.post("flutter/set_account_by_id.php",data: formData);
-    print("原始資料: ${response.data}");
-    var json = jsonDecode(response.data);
-    var code = json['code'];
-    switch(code){
+    var response = await dioPostRequest("flutter/set_account_by_id.php",formData);
+    switch(response['code']){
       case 100: makeToast("提交失敗，請再試一次");break;
       case 200: makeToast("修改成功");endPage();break;
     }
@@ -134,20 +131,14 @@ class _PagePageEditAccountState extends CustomState<PageEditAccount>{
     var formData = FormData.fromMap({
       'id': widget.selectId,
     });
-    var response = await dio.post("flutter/get_account_by_id.php",data: formData);
-    print("原始資料: ${response.data}");
-    var json = jsonDecode(response.data);
-    //var code = json['code'];
-    var data = json['data'];
+    var response = await dioPostRequest("flutter/get_account_by_id.php",formData);
+    if(response == null) return;
+    var data = response['data'];
     refreshUI(() {
       textAccount = data['account'];
       textPassword = data['password'];
       editAccount.text = data['account'];
       editPassword.text = data['password'];
     });
-    /*if(code == 200){
-      resultList = json['data'];
-    }*/
-    //setState(() {});
   }
 }

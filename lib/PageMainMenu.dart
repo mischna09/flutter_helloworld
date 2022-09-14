@@ -22,10 +22,6 @@ class _PageMainMenuState extends CustomState<PageMainMenu>{
     return DefaultTabController(
       length: 3,
       child: Scaffold(
-        /*appBar: AppBar(
-          title: Text("主頁面"),
-          automaticallyImplyLeading: false,
-        ),*/
         body: TabBarView(
           children: [
             TabKeepAlive(child: _Page1().page()),
@@ -36,8 +32,11 @@ class _PageMainMenuState extends CustomState<PageMainMenu>{
         bottomNavigationBar: Container(
           color: Theme.of(context).primaryColor,
           child: TabBar(
+            indicator: BoxDecoration(
+              color: Theme.of(context).backgroundColor,
+              borderRadius: BorderRadius.circular(10),
+            ),
             labelPadding: EdgeInsets.all(12.0),
-            //indicatorPadding: EdgeInsets.all(16.0),
             tabs: [
               Column(
                 mainAxisSize: MainAxisSize.min,
@@ -63,10 +62,9 @@ class _Page1{
   Widget page(){
     return Scaffold(
       appBar: AppBar(
-        //backgroundColor: Colors.lightBlueAccent,
         title: Text("首頁"),
+        automaticallyImplyLeading: false,
         centerTitle: true,
-        //toolbarHeight: 0,
       ),
       body: SafeArea(
         child: Column(
@@ -79,12 +77,22 @@ class _Page1{
       ),
     );
   }
+
+  Widget mainItem(){
+    var widget = Container(
+
+    );
+    return Text("");
+  }
 }
 class _Page2{
   Widget page(){
     return Scaffold(
       appBar: AppBar(
-        toolbarHeight: 0,
+        title: Text("發文"),
+        automaticallyImplyLeading: false,
+        centerTitle: true,
+        //toolbarHeight: 0,
       ),
       body: SafeArea(
         child: Column(

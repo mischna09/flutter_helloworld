@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -55,7 +53,7 @@ class _PageAccountListState extends CustomState<PageAccountList>{
                     onTap: () => selectItem(index),
                     child: Card(
                       margin: EdgeInsets.all(6),
-                      color: (selectId!=index) ? Colors.white : Theme.of(context).backgroundColor,
+                      color: (selectId!=index) ? Colors.white : Theme.of(context).primaryColorLight,
                       child: Padding(
                         padding: const EdgeInsets.fromLTRB(16, 16, 16, 16),
                         child: Column(
@@ -80,7 +78,7 @@ class _PageAccountListState extends CustomState<PageAccountList>{
               width: double.infinity,
               decoration: BoxDecoration(
                 color: Theme.of(context).primaryColor,
-                borderRadius: BorderRadius.only(topLeft: Radius.circular(16), topRight: Radius.circular(16))
+                borderRadius: BorderRadius.only(topLeft: Radius.circular(16), topRight: Radius.circular(16)),
               ),
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
@@ -140,14 +138,13 @@ class _PageAccountListState extends CustomState<PageAccountList>{
   }
 
   Future<void> dioGetList() async {
-    var response = await dio.post("flutter/get_account_list.php");
-    print("原始資料: ${response.data}");
-    var json = jsonDecode(response.data);
-    var code = json['code'];
-    if(code == 200){
-      resultList = json['data'];
-    }
+    var response = await dioPostRequest("flutter/get_account_list.php",null);
+    if(response == null) return;
 
+    var code = response['code'];
+    if(code == 200){
+      resultList = response['data'];
+    }
     refreshUI(null);
   }
 }

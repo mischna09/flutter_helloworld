@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 
 class LoadingDialog{
-
-  var animationDuration = const Duration(milliseconds: 300);
-  var dismissable = true;
-  var onDismiss;
-
+  //var animationDuration = const Duration(milliseconds: 300);
+  //var dismissable = true;
+  //var onDismiss;
   bool _isShowing = false;
 
   void _makeDialog(BuildContext context) async{

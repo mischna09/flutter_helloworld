@@ -10,7 +10,7 @@ import 'package:helloworld/PageRegister.dart';
 import 'package:helloworld/dataClass/article.dart';
 
 import 'PageMainMenu.dart';
-import 'module/BaseDio.dart';
+import 'custom/LoadingDialog.dart';
 import 'module/Util.dart';
 
 void main() {
@@ -27,7 +27,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         /* TODO 主題顏色，可以讓用戶設定 */
-        primarySwatch: Colors.green,
+        primarySwatch: Colors.blue,
       ),
       home: const MyHomePage(title: 'Flutter Demo Home Page'),
     );
@@ -43,7 +43,6 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends CustomState<MyHomePage>{
-  int _counter = 0;
   var editAccount = TextEditingController();
   var editPassword = TextEditingController();
 
@@ -54,20 +53,15 @@ class _MyHomePageState extends CustomState<MyHomePage>{
       'account': editAccount.text,
       'password': editPassword.text,
     });
-    var response = await BaseDio.getInstance().post(
-        "flutter/login.php",
-        data: formData
-    );
-    print("原始資料: ${response.data}");
-    var json = jsonDecode(response.data);
-    var article = Article.fromJson(json);
-    print("回傳結果: ${article.code}");
-    switch(article.code){
+    var response = await dioPostRequest("flutter/login.php", formData);
+    if(response == null) return;
+
+    switch(response['code']){
       case 100: print("登入失敗");break;
-      case 200: print("登入成功");break;
+      case 200: print("登入成功");startNewPage(PageMainMenu());;break;
     }
   }
-  
+
   @override
   Widget build(BuildContext context) {
     return secondBackup(context);
@@ -85,7 +79,7 @@ class _MyHomePageState extends CustomState<MyHomePage>{
             child: Container(
               height: double.infinity,
               decoration: BoxDecoration(color: Theme.of(context).backgroundColor),
-              child: Stack(
+              child: Column(
                 children: [
                   Column(
                     mainAxisSize: MainAxisSize.min,
@@ -143,7 +137,6 @@ class _MyHomePageState extends CustomState<MyHomePage>{
                                 controller: editAccount,
                                 decoration: InputDecoration(
                                     labelText: '帳號',
-                                    //hintText: "請輸入帳號",
                                     border: OutlineInputBorder(
                                         borderRadius:
                                             BorderRadius.circular(8))),
@@ -171,7 +164,8 @@ class _MyHomePageState extends CustomState<MyHomePage>{
                                               color: Colors.blue),
                                           recognizer: TapGestureRecognizer()
                                             ..onTap = () {
-                                              print("忘記密碼");
+                                              editAccount.text = "123";
+                                              editPassword.text = "1234";
                                             }))
                                 ],
                               ),
@@ -180,8 +174,7 @@ class _MyHomePageState extends CustomState<MyHomePage>{
                                     const EdgeInsets.only(top: 10, bottom: 10),
                                 child: ElevatedButton(
                                   onPressed: () {
-                                    startNewPage(context, PageMainMenu());
-                                    //LoadingDialog().showDialogAndWait(context, dioGetArticleList());
+                                    LoadingDialog().showDialogAndWait(context, dioGetArticleList());
                                   },
                                   child: Row(
                                     mainAxisAlignment: MainAxisAlignment.center,
@@ -192,7 +185,7 @@ class _MyHomePageState extends CustomState<MyHomePage>{
                                 ),
                               ),
                               OutlinedButton(
-                                onPressed: ()=> startNewPage(context, PageRegister()) ,
+                                onPressed: ()=> startNewPage(PageRegister()) ,
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: const [
@@ -201,7 +194,7 @@ class _MyHomePageState extends CustomState<MyHomePage>{
                                 ),
                               ),
                               OutlinedButton(
-                                onPressed: ()=> startNewPage(context, PageAccountList()) ,
+                                onPressed: ()=> startNewPage(PageAccountList()) ,
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: const [
@@ -215,15 +208,6 @@ class _MyHomePageState extends CustomState<MyHomePage>{
                       )
                     ],
                   ),
-                  const Align(
-                    alignment: Alignment.bottomCenter,
-                    child: Text(
-                      "2022/9/13",
-                      style: TextStyle(
-                        color: Colors.white,
-                      ),
-                    ),
-                  )
                 ],
               ),
             ),
@@ -363,7 +347,7 @@ class _MyHomePageState extends CustomState<MyHomePage>{
                   'You have pushed the button this many times2:',
                 ),
                 Text(
-                  '$_counter',
+                  '_counter',
                   style: Theme.of(context).textTheme.headline4,
                 ),
               ],

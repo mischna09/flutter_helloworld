@@ -1,11 +1,9 @@
-import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:helloworld/custom/ExpandToggleButtons.dart';
 import 'package:dio/dio.dart';
 import 'package:helloworld/custom/LoadingDialog.dart';
-import 'dataClass/article.dart';
 import 'module/Util.dart';
 
 class PageRegister extends StatefulWidget {
@@ -206,15 +204,9 @@ class _PageRegisterState extends CustomState<PageRegister>{
       'password': editPassword.text,
     });
 
-    var response = await dio.post(
-        "flutter/register.php",
-        data: formData
-    );
-    print("原始資料: ${response.data}");
-    var json = jsonDecode(response.data);
-    var article = Article.fromJson(json);
-    print("回傳結果: ${article.code}");
-    switch(article.code){
+    var response = await dioPostRequest("flutter/register.php",formData);
+    if(response == null) return;
+    switch(response['code']){
       case 100: makeToast("失敗100");break;
       case 200: makeToast("成功200");break;
       case 201: makeToast("此帳號已存在");break;
