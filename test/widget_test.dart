@@ -9,9 +9,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:helloworld/main.dart';
+/**
+ * 生成可展示測試
+ * flutter run test/widget_test.dart
+ *
+**/
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
+  /*testWidgets('Counter increments smoke test', (WidgetTester tester) async {
     // Build our app and trigger a frame.
     await tester.pumpWidget(const MyApp());
 
@@ -26,5 +31,21 @@ void main() {
     // Verify that our counter has incremented.
     expect(find.text('0'), findsNothing);
     expect(find.text('1'), findsOneWidget);
+  });*/
+  testWidgets('測試登入', (WidgetTester tester) async {
+    // Build our app and trigger a frame.
+    await tester.pumpWidget(const MyApp());
+
+    await tester.tap(find.text("忘記密碼", findRichText: true));
+    expect(find.text('123'), findsOneWidget);
+    expect(find.text('1234'), findsOneWidget);
+
+    // Tap the '+' icon and trigger a frame.
+    //await tester.tap(find.byIcon(Icons.add));
+    //await tester.pump();
+
+    // Verify that our counter has incremented.
+    //expect(find.text('0'), findsNothing);
+    //expect(find.text('1'), findsOneWidget);
   });
 }

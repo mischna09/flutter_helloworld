@@ -1,16 +1,5 @@
-import 'dart:ui';
-
-import 'package:dio/dio.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:helloworld/PageAccountList.dart';
-import 'package:helloworld/PageRegister.dart';
-
-import 'PageLogin.dart';
-import 'PageMainMenu.dart';
-import 'custom/LoadingDialog.dart';
-import 'module/Util.dart';
+import 'package:helloworld/page/PageLogin.dart';
 
 void main() {
   runApp(const MyApp());

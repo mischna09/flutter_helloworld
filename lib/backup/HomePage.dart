@@ -4,10 +4,10 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:helloworld/custom/LoadingDialog.dart';
 
-import '../PageLogin.dart';
-import '../PageMainMenu.dart';
-import '../PageRegister.dart';
 import '../module/Util.dart';
+import '../page/PageLogin.dart';
+import '../page/PageMainMenu.dart';
+import '../page/PageRegister.dart';
 
 @Deprecated("首頁已重構，此處為遺址")
 class MyHomePage extends StatefulWidget {

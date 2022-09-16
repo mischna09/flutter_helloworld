@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:helloworld/custom/ExpandToggleButtons.dart';
 import 'package:dio/dio.dart';
 import 'package:helloworld/custom/LoadingDialog.dart';
-import 'module/Util.dart';
+import '../module/Util.dart';
 
 class PageRegister extends StatefulWidget {
   @override

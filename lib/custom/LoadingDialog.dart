@@ -66,7 +66,7 @@ class LoadingDialog{
                   ),
                   OutlinedButton(
                     onPressed: () => Navigator.pop(context),
-                    child: Text("取消"),
+                    child: Text("強制關閉"),
                   ),
                 ],
               ),

@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'PageEditAccount.dart';
-import 'module/Util.dart';
+import '../module/Util.dart';
 
 class PageAccountList extends StatefulWidget {
   @override

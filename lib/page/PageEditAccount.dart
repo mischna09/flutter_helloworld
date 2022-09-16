@@ -4,7 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 import 'package:helloworld/custom/LoadingDialog.dart';
-import 'module/Util.dart';
+import '../module/Util.dart';
 
 class PageEditAccount extends StatefulWidget {
   PageEditAccount({Key? key,required this.selectId}):super(key:key);
@@ -33,6 +33,12 @@ class _PagePageEditAccountState extends CustomState<PageEditAccount>{
   @override
   Widget build(BuildContext context) {
     return pageMain(context);
+  }
+  @override
+  void dispose() {
+    editAccount.dispose();
+    editPassword.dispose();
+    super.dispose();
   }
 
   Scaffold pageMain(BuildContext context){

@@ -2,10 +2,10 @@ import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:helloworld/page/PageRegister.dart';
+import '../custom/LoadingDialog.dart';
+import '../module/Util.dart';
 import 'PageMainMenu.dart';
-import 'PageRegister.dart';
-import 'custom/LoadingDialog.dart';
-import 'module/Util.dart';
 
 class PageLogin extends StatefulWidget {
 
@@ -22,10 +22,15 @@ class _PageLoginState extends CustomState<PageLogin>{
   void initState(){
     super.initState();
   }
-
   @override
   Widget build(BuildContext context) {
     return pageMain(context);
+  }
+  @override
+  void dispose() {
+    editAccount.dispose();
+    editPassword.dispose();
+    super.dispose();
   }
 
   Widget pageMain(BuildContext context){
@@ -101,6 +106,7 @@ class _PageLoginState extends CustomState<PageLogin>{
                   text: "忘記密碼",
                   style: TextStyle(color: Theme.of(context).primaryColorDark),
                   recognizer: TapGestureRecognizer()..onTap = () {
+                    startNewPage(PageMainMenu());
                     editAccount.text = "123";
                     editPassword.text = "1234";
                   }
