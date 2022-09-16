@@ -92,6 +92,9 @@ class _PagePageEditAccountState extends CustomState<PageEditAccount>{
                       children: [
                         Expanded(
                           child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              disabledBackgroundColor: Theme.of(context).primaryColorLight,
+                            ),
                             onPressed: isBtnSubmitEnable ? ()=>
                                 LoadingDialog().showDialogAndWait(context,dioSubmit()):null,
                             child: Text("提交")

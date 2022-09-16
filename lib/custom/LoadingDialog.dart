@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 class LoadingDialog{
@@ -5,9 +6,33 @@ class LoadingDialog{
   //var dismissable = true;
   //var onDismiss;
   bool _isShowing = false;
+  late final BuildContext context;
 
-  void _makeDialog(BuildContext context) async{
-    Widget widget = Material(
+  Future<void> showDialogAndWait(BuildContext context, Future func) async {
+    this.context = context;
+    _makeDialog();
+    await func;
+    if (_isShowing) {
+      if (kDebugMode) {
+        print("Dialog: 載入框關閉。");
+      }
+      _isShowing = false;
+      Navigator.pop(context);
+    }
+  }
+
+  void _makeDialog() async{
+    _isShowing = true;
+    await showDialog(
+        context: context,
+        //barrierDismissible: false,
+        builder: (context) => _dialogWidget()
+    );
+    _isShowing = false;
+  }
+
+  Widget _dialogWidget(){
+    return Material(
       type: MaterialType.transparency,
       child: Container(
         color: Colors.black26,
@@ -50,22 +75,6 @@ class LoadingDialog{
         ),
       ),
     );
-    _isShowing = true;
-    await showDialog(
-        context: context,
-        //barrierDismissible: false,
-        builder: (context) => widget
-    );
-    _isShowing = false;
-  }
-
-  Future<void> showDialogAndWait(BuildContext context, Future func) async {
-    _makeDialog(context);
-    await func;
-    if (_isShowing) {
-      _isShowing = false;
-      Navigator.pop(context);
-    }
   }
 }
 

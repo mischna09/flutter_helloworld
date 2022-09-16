@@ -45,27 +45,12 @@ class _PageAccountListState extends CustomState<PageAccountList>{
                 key: indicator,
                 onRefresh: () => dioGetList(),
                 child: ListView.builder(
-                  scrollDirection: Axis.vertical,
+                  //physics: const BouncingScrollPhysics(),
+                  //scrollDirection: Axis.vertical,
                   itemCount: resultList.length,
                   //shrinkWrap: true,
                   itemBuilder: (BuildContext context, int index) {
-                  return GestureDetector(
-                    onTap: () => selectItem(index),
-                    child: Card(
-                      margin: EdgeInsets.all(6),
-                      color: (selectId!=index) ? Colors.white : Theme.of(context).primaryColorLight,
-                      child: Padding(
-                        padding: const EdgeInsets.fromLTRB(16, 16, 16, 16),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text("帳號 : ${resultList[index]['account']}"),
-                            Text("密碼 : ${resultList[index]['password']}"),
-                          ],
-                        ),
-                      ),
-                    ),
-                  );
+                  return _widgetListItem(index);
                 },
                   //padding: EdgeInsets.fromLTRB(16, 32, 16, 32),
                   //separatorBuilder: (BuildContext context, int index) => const Divider(),
@@ -121,6 +106,45 @@ class _PageAccountListState extends CustomState<PageAccountList>{
           ],
         )),
     );
+  }
+
+  Widget _widgetListItem(int index) {
+    return GestureDetector(
+                  onTap: () => selectItem(index),
+                  child: Card(
+                    margin: EdgeInsets.all(6),
+                    color: (selectId!=index) ? Colors.white : Theme.of(context).primaryColorLight,
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(16, 16, 16, 16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text("帳號 : ${resultList[index]['account']}"),
+                          Text("密碼 : ${resultList[index]['password']}"),
+                        ],
+                      ),
+                    ),
+                  ),
+                );
+  }
+  Widget _widgetListItem2(int index) {
+    return GestureDetector(
+                  onTap: () => selectItem(index),
+                  child: Card(
+                    margin: EdgeInsets.all(6),
+                    color: (selectId!=index) ? Colors.white : Theme.of(context).primaryColorLight,
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(16, 16, 16, 16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text("帳號 : #$index"),
+                          Text("密碼 : 測試流暢度、測試流暢度、測試流暢度"),
+                        ],
+                      ),
+                    ),
+                  ),
+                );
   }
 
   void selectItem(int index){

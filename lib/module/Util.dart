@@ -8,11 +8,11 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'BaseDio.dart';
 
 class CustomState<T extends StatefulWidget> extends State<T>{
+
   /* 網路請求 */
-  var dio = BaseDio.getInstance();
   Future<dynamic> dioPostRequest(String URL, FormData? formData) async {
     try {
-      var response = await dio.post(URL,data: formData,);
+      var response = await BaseDio.getInstance().post(URL,data: formData,);
       if (kDebugMode) {
         print("原始資料: ${response.data}");
       }
@@ -37,7 +37,7 @@ class CustomState<T extends StatefulWidget> extends State<T>{
   }
 
   /* Toast */
-  void makeToast(String msg) {
+  makeToast(String msg) {
     Fluttertoast.showToast(
         msg: msg,
         toastLength: Toast.LENGTH_SHORT,
@@ -51,15 +51,13 @@ class CustomState<T extends StatefulWidget> extends State<T>{
   }
 
   startNewPage(StatefulWidget page) async{
-    await Future.delayed(Duration(milliseconds: 200));
-    Navigator.push(context,MaterialPageRoute(builder: (context) => page));
+    await Future.delayed(const Duration(milliseconds: 200));
+    if(mounted) Navigator.push(context,MaterialPageRoute(builder: (context) => page));
   }
 
-  void refreshUI(VoidCallback? fn){
+  refreshUI(VoidCallback? fn){
     /* 檢查頁面是否還在，否則會造成記憶體洩漏 */
-    if(mounted) {
-      setState(() => fn?.call());
-    }
+    if(mounted) setState(() => fn?.call());
   }
 
   @override
