@@ -26,6 +26,7 @@ class CustomState<T extends StatefulWidget> extends State<T>{
         case DioErrorType.receiveTimeout:
         case DioErrorType.response:
         case DioErrorType.other:
+          print("DioErrorType: ${error.type}|${error.response}");
           makeToast("網路異常，請稍後重試");
           break;
         case DioErrorType.cancel:
@@ -51,7 +52,7 @@ class CustomState<T extends StatefulWidget> extends State<T>{
 
   startNewPage(StatefulWidget page) async{
     await Future.delayed(const Duration(milliseconds: 200));
-    if(mounted) Navigator.push(context,MaterialPageRoute(builder: (context) => page));
+    if(mounted) await Navigator.push(context,MaterialPageRoute(builder: (context) => page));
   }
 
   refreshUI(VoidCallback? fn){

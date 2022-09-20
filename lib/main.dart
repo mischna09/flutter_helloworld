@@ -17,7 +17,7 @@ class MyApp extends StatelessWidget {
         /* TODO 主題顏色，可以讓用戶設定 */
         primarySwatch: Colors.blue,
       ),
-      home: PageLogin(),
+      home: PageLogin()
     );
   }
 }

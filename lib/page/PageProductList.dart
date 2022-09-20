@@ -1,10 +1,9 @@
+import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:helloworld/page/PageAccountList.dart';
-import 'package:helloworld/backup/TestPage.dart';
-import '../custom/TabKeepAlive.dart';
-import '../module/Util.dart';
 import 'PageMainMenu.dart';
+import 'package:flutter_quill/flutter_quill.dart' as Quill;
 
 /*  第一頁  */
 class Page1{
@@ -91,7 +90,7 @@ class Page2{
   StatefulWidget page() {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("首頁"),
+        title: const Text("第二頁"),
         automaticallyImplyLeading: false,
         centerTitle: true,
       ),
@@ -228,6 +227,13 @@ class Page3 {
                 child: OutlinedButton(
                   onPressed: ()=> parent.startNewPage(Page5(parent).page()),
                   child: const Text("樣式四")
+                ),
+              ),
+              Container(
+                width: double.infinity,
+                child: OutlinedButton(
+                  onPressed: ()=> parent.startNewPage(Page7(parent).page()),
+                  child: const Text("文字編輯")
                 ),
               ),
             ],
@@ -503,6 +509,71 @@ class Page6{
           ),
         ),*/
       ],
+    );
+  }
+}
+/*  文字編輯  */
+class Page7{
+  Page7(this.parent);
+  final PageMainMenuState parent;
+
+  List<int> list = List<int>.generate(1, (index) => index);
+  Quill.QuillController _controller = Quill.QuillController.basic();
+  late Quill.QuillController _controller2;
+
+
+  StatefulWidget page() {
+    var data = [{"insert":"Hdbsjsk"},{"insert":"\n","attributes":{"header":1}},{"insert":"Sheet"},{"insert":"\n","attributes":{"list":"ordered"}},{"insert":"Shake"},{"insert":"\n","attributes":{"list":"ordered"}},{"insert":"Djdjdjdxi","attributes":{"color":"#ef5350"}},{"insert":"\n","attributes":{"list":"ordered"}}];
+    var json = jsonEncode(data);
+    _controller2 = Quill.QuillController(
+        document: Quill.Document.fromJson(jsonDecode(json)),
+        selection: const TextSelection.collapsed(offset: 0)
+    );
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text("首頁"),
+        automaticallyImplyLeading: false,
+        centerTitle: true,
+      ),
+      body: SafeArea(
+        child: Column(
+          children: [
+            Expanded(
+              child: Container(
+                child: Quill.QuillEditor.basic(
+                  controller: _controller,
+                  readOnly: false, // true for view only mode
+                ),
+              ),
+            ),
+            Divider(),
+            Expanded(
+              child: Container(
+                child: Quill.QuillEditor.basic(
+                  controller: _controller2,
+                  readOnly: false,
+                ),
+              ),
+            ),
+            OutlinedButton(
+              onPressed: (){
+                var json = jsonEncode(_controller.document.toDelta().toJson());
+                print("ENCODE JSON: $json");
+                print("-----------------");
+                /*var myJSON = Quill.Document.fromJson(jsonDecode(json));
+                parent.refreshUI((){
+                  _controller2 = Quill.QuillController(
+                      document: myJSON,
+                      selection: const TextSelection.collapsed(offset: 0)
+                  );
+                });*/
+              },
+              child: Text("JSON")
+            ),
+            Quill.QuillToolbar.basic(controller: _controller),
+          ],
+        ),
+      ),
     );
   }
 }

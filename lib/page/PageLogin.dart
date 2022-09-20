@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:helloworld/module/UserData.dart';
 import 'package:helloworld/page/PageRegister.dart';
 import '../custom/LoadingDialog.dart';
 import '../module/Util.dart';
@@ -171,7 +172,13 @@ class _PageLoginState extends CustomState<PageLogin>{
 
     switch(response['code']){
       case 100: print("登入失敗");break;
-      case 200: print("登入成功");startNewPage(PageMainMenu());;break;
+      case 200: {
+        print("登入成功");
+        UserData.account = editAccount.text;
+        UserData.password = editPassword.text;
+        startNewPage(PageMainMenu());
+        break;
+      }
     }
   }
 }

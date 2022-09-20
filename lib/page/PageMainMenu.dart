@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:helloworld/page/PageProductList.dart';
 import '../custom/TabKeepAlive.dart';
 import '../module/Util.dart';
+import 'PageNoteList.dart';
 
 class PageMainMenu extends StatefulWidget {
   @override
@@ -13,13 +14,13 @@ class PageMainMenu extends StatefulWidget {
 
 class PageMainMenuState extends CustomState<PageMainMenu> {
   late final Page6 page1;
-  late final Page2 page2;
+  late final PageNoteList page2;
   late final Page3 page3;
   @override
   void initState() {
     super.initState();
     page1 = Page6(this);
-    page2 = Page2(this);
+    page2 = PageNoteList();
     page3 = Page3(this);
   }
 
@@ -38,7 +39,7 @@ class PageMainMenuState extends CustomState<PageMainMenu> {
               child: TabBarView(
                 children: [
                   TabKeepAlive(child: page1.page()),
-                  TabKeepAlive(child: page2.page()),
+                  TabKeepAlive(child: page2),
                   TabKeepAlive(child: page3.page()),
                 ],
               ),

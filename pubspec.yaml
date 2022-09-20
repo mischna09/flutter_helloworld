@@ -41,10 +41,13 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_launcher_icons: 0.9.0
+  #flutter_launcher_icons: 0.9.0
   json_serializable: ^6.2.0
   build_runner: ^2.1.11
   fluttertoast: ^8.0.9
+  #文字編輯
+  flutter_quill: ^6.0.5
+  i18n_extension: ^5.0.1
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is

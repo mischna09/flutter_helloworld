@@ -95,7 +95,7 @@ class _PageRegisterState extends CustomState<PageRegister>{
                       ),
                     ),
                     //customToggle(),
-                    ElevatedButton(
+                    /*ElevatedButton(
                       onPressed: () {
                         showCupertinoModalPopup(
                             context: context,
@@ -119,7 +119,7 @@ class _PageRegisterState extends CustomState<PageRegister>{
                         );
                       },
                       child: Text("iOS風格選擇器"),
-                    ),
+                    ),*/
                     ElevatedButton(
                       onPressed: () {
                         btnRegisterOnClick();
